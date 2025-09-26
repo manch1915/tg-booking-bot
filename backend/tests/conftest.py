@@ -24,7 +24,7 @@ NOW = datetime(2026, 10, 19, 6, 0, tzinfo=UTC)
 
 
 def _settings() -> Settings:
-    return Settings(database_url=TEST_DB_URL, env="test", bot_token=None)
+    return Settings(database_url=TEST_DB_URL, env="test", bot_token=None, demo_mode=True)
 
 
 async def _recreate_database() -> None:

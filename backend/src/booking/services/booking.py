@@ -114,6 +114,8 @@ class BookingService:
     ) -> Booking:
         business = await load_business(self.session)
         await self._check_method(business, request)
+        if request.payment_method is not PaymentMethod.ON_SITE:
+            self.payments.provider_for(request.payment_method, client)
         offer = await self._pick_offer(request, strict=strict)
         await self._lock_master(offer.master.id)
         await self._release_stale_holds(offer.master.id)
@@ -187,6 +189,8 @@ class BookingService:
         return PaymentOutcome(await self.get(booking.id), confirmed=True)
 
     async def complete_demo_payment(self, payment_id: int, client: Client) -> PaymentOutcome:
+        if not self.payments.settings.demo_mode:
+            raise NotFoundError("Payment not found")
         payment = await self.session.get(Payment, payment_id)
         if payment is None:
             raise NotFoundError("Payment not found")

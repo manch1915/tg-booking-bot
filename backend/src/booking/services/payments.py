@@ -79,6 +79,9 @@ class PaymentService:
         if method is PaymentMethod.CARD and in_telegram and self.settings.payment_provider_token:
             return PaymentProvider.TELEGRAM_CARD
         # Browser demo or no BotFather payment token: simulated checkout, nothing is charged.
+        # Never outside demo mode, otherwise a booking could be confirmed without real money.
+        if not self.settings.demo_mode:
+            raise PaymentError("This payment method is not available")
         return PaymentProvider.DEMO
 
     def create_deposit(

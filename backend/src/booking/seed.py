@@ -459,6 +459,9 @@ async def seed(session: AsyncSession, settings: Settings, now: datetime | None =
 
 async def main(if_empty: bool) -> None:
     settings = get_settings()
+    if not settings.demo_mode:
+        # The seed creates a well-known admin login, so it only runs for the public demo.
+        raise SystemExit("Demo data is only loaded with DEMO_MODE=true")
     engine = make_engine(settings.database_url)
     factory = make_sessionmaker(engine)
     async with factory() as session, session.begin():

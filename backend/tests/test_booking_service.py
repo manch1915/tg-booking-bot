@@ -28,7 +28,7 @@ from booking.infra.db.models import (
 from booking.services.availability import AvailabilityService, SlotOption
 from booking.services.booking import BookingRequest, BookingService
 from booking.services.clock import FixedClock
-from booking.services.errors import PolicyError, SlotUnavailableError
+from booking.services.errors import PaymentError, PolicyError, SlotUnavailableError
 from booking.services.payments import PaymentService
 from booking.services.waitlist import WaitlistService
 
@@ -428,3 +428,23 @@ async def test_concurrent_bookings_of_one_slot(
                 booking = await session.get(Booking, booking_id)
                 if booking is not None:
                     await session.delete(booking)
+
+
+async def test_demo_checkout_is_refused_outside_demo_mode(
+    session: AsyncSession, clock: FixedClock, settings: Settings
+) -> None:
+    strict = settings.model_copy(update={"demo_mode": False})
+    service_layer = BookingService(session, clock, PaymentService(session, clock, strict))
+    service = await service_by_name(session, "Skin fade")
+    master = await master_by_name(session, "Artur Sargsyan")
+    slot = await first_free_slot(session, clock, service, master)
+    with pytest.raises(PaymentError):
+        await service_layer.create(
+            await some_client(session, 12),
+            BookingRequest(
+                service_id=service.id,
+                master_id=master.id,
+                starts_at=slot.starts_at,
+                payment_method=PaymentMethod.CARD,
+            ),
+        )
