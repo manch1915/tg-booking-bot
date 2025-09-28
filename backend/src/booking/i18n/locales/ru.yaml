@@ -1,0 +1,188 @@
+common:
+  back: "← Назад"
+  menu: "Главное меню"
+  cancel: "Отмена"
+  any_master: "Любой мастер"
+  minutes: "{n} мин"
+  from_price: "от {price}"
+
+menu:
+  welcome: |-
+    <b>{name}</b>
+    {tagline}
+
+    Запишитесь за минуту: выберите услугу, мастера и удобное время. Напомним за сутки и за 2 часа до визита.
+  welcome_back: "С возвращением, {name}! Чем помочь?"
+  book: "Записаться"
+  open_app: "Открыть приложение"
+  my_bookings: "Мои записи"
+  bonuses: "Бонусы и друзья"
+  contacts: "Контакты"
+  language: "English"
+  app_button: "Записаться"
+
+book:
+  choose_category: "Что будем делать?"
+  choose_service: "<b>{category}</b>\nВыберите услугу:"
+  service_line: "{name} · {price} · {duration}"
+  choose_master: |-
+    <b>{service}</b>
+    {description}
+
+    Кто вас примет?
+  master_line: "{name} · {price}"
+  master_line_rated: "{name} · {price} · ★ {rating}"
+  choose_day: "<b>{service}</b>, {master}\nВыберите день:"
+  day_line: "{date} · {count}"
+  no_days: "На ближайшие две недели всё занято. Встать в лист ожидания на конкретный день можно в приложении."
+  choose_time: "<b>{date}</b>\n{service}, {master}\nСвободное время:"
+  no_time: "На этот день свободного времени нет."
+  waitlist_join: "Сообщить, если освободится"
+  waitlist_done: "Готово. Как только на {date} появится окно, пришлём сообщение."
+  summary: |-
+    <b>Проверьте запись</b>
+
+    {service}
+    Мастер: {master}
+    Когда: {when}
+    Стоимость: {price}
+  summary_bonus: "Бонусами: −{amount}"
+  summary_deposit: "Депозит сейчас: {deposit}. Остальное оплатите в салоне."
+  summary_rules: "Перенести или отменить с возвратом депозита можно до {deadline}."
+  use_bonus: "Списать бонусы: {amount}"
+  bonus_used: "✓ Списываем {amount} бонусов"
+  pay_card: "Депозит картой · {amount}"
+  pay_stars: "Депозит в Stars · {amount}"
+  confirm_on_site: "Подтвердить запись"
+  slot_taken: "Это время только что заняли. Выберите другое."
+  hold_note: "Время закреплено за вами на {minutes} минут. Оплатите депозит, и запись подтвердится."
+  confirmed: |-
+    <b>Вы записаны</b>
+
+    {service}
+    {master}, {when}
+    {address}
+
+    Напомним за сутки и за 2 часа.
+  payment_late_refunded: "Оплата пришла, когда время уже заняли. Деньги вернули, выберите другое время."
+
+invoice:
+  title: "Депозит: {service}"
+  description: "{master}, {when}. Засчитывается в оплату визита, возвращается при отмене за {hours} ч."
+  tip_title: "Чаевые мастеру"
+  tip_description: "Спасибо от вас для {master}"
+  label: "Депозит"
+
+bookings:
+  empty: "У вас пока нет записей."
+  upcoming: "<b>Ближайшие записи</b>"
+  line: "{when} · {service}"
+  card: |-
+    <b>{service}</b>
+    Мастер: {master}
+    Когда: {when}
+    Стоимость: {price}
+    Статус: {status}
+  deposit_paid: "Депозит {amount} оплачен"
+  deadline: "Перенос и отмена с возвратом депозита до {deadline}."
+  deadline_passed: "Срок бесплатной отмены прошёл: при отмене депозит не вернётся."
+  reschedule: "Перенести"
+  cancel: "Отменить"
+  pay: "Оплатить депозит"
+  cancel_confirm: "Точно отменить запись на {when}?"
+  cancel_confirm_late: "До визита меньше {hours} ч. Если отменить сейчас, депозит {amount} останется в салоне. Отменить?"
+  cancel_yes: "Да, отменить"
+  cancel_no: "Нет, оставить"
+  cancelled: "Запись отменена."
+  cancelled_refund: "Запись отменена, депозит вернётся на карту или в Stars."
+  cancelled_refund_pending: "Запись отменена. Возврат депозита оформит администратор."
+  too_late_reschedule: "Перенести можно не позже чем за {hours} ч до визита. Позвоните нам: {phone}"
+  rescheduled: "Готово, запись перенесена на {when}."
+  choose_new_day: "На какой день перенести?"
+  status:
+    pending_payment: "ждёт оплаты"
+    confirmed: "подтверждена"
+    completed: "визит состоялся"
+    cancelled: "отменена"
+    no_show: "неявка"
+
+bonuses:
+  info: |-
+    <b>Бонусы</b>
+    На счёте: <b>{balance}</b>
+
+    {cashback}% от каждого визита возвращается бонусами. Ими можно оплатить до {share}% следующей услуги.
+
+    <b>Приведите друга</b>
+    Когда друг придёт на первую стрижку, вы получите {referral}. Ваша ссылка:
+    {link}
+
+    Приглашено: {invited}
+  share: "Поделиться ссылкой"
+  share_text: "Записываюсь в {name} через Telegram, удобно. По ссылке получишь бонусы на первую стрижку:"
+
+contacts:
+  text: |-
+    <b>{name}</b>
+    {address}
+    {phone}
+
+    Работаем каждый день с 10:00 до 21:00.
+  map: "Открыть на карте"
+
+review:
+  ask: "Как вам визит к {master}? Оцените от 1 до 5."
+  ask_comment: "Спасибо! Напишите пару слов, что понравилось или что улучшить. Или нажмите «Пропустить»."
+  skip: "Пропустить"
+  thanks: "Спасибо за отзыв!"
+  tip_offer: "Если хотите, можно оставить чаевые мастеру в Stars."
+  tip_amount: "{amount} ⭐"
+  tip_thanks: "Чаевые отправлены, {master} будет рад."
+  already: "Отзыв уже оставлен, спасибо!"
+
+notify:
+  booking_confirmed: |-
+    <b>Запись подтверждена</b>
+    {service}, {master}
+    {when}
+    {address}
+  reminder_day: |-
+    <b>Завтра ждём вас</b>
+    {service}, {master}
+    {when}
+
+    Если планы поменялись, перенесите или отмените запись до {deadline}.
+  reminder_soon: |-
+    Через 2 часа ваш визит: {service}, {master}, {time}.
+    {address}
+  review_request: |-
+    Как прошёл визит к {master}? Оцените от 1 до 5.
+    На ваш счёт уже начислено {cashback} бонусов.
+  booking_cancelled: |-
+    Салон отменил запись на {when} ({service}). Если вносили депозит, он вернётся.
+    Подберём другое время?
+  booking_rescheduled: "Ваша запись перенесена: {service}, {master}, {when}."
+  master_new_booking: |-
+    <b>Новая запись</b>
+    {client} {phone}
+    {service}, {when}
+  master_cancelled: "<b>Отмена</b>: {client}, {service}, {when}"
+  master_rescheduled: "<b>Перенос</b>: {client}, {service}. Было {previous}, стало {when}"
+  waitlist_slot: "Освободилось время на {date} у {master}. Успейте записаться, первым откликнувшимся достанется окно."
+  bonus_accrued: "{friend} пришёл на первую стрижку по вашей ссылке. Вам начислено {amount} бонусов."
+  open_booking: "Записаться"
+  keep: "Всё в силе"
+
+master:
+  linked: "Готово, {name}. Сюда будут приходить новые записи и отмены. Список на сегодня: /today"
+  bad_link: "Ссылка для мастера недействительна. Попросите новую у администратора."
+  today_empty: "Сегодня записей нет."
+  today_title: "<b>Записи на {date}</b>"
+  today_line: "{time} {service} · {client}"
+
+lang:
+  switched: "Язык: русский"
+
+errors:
+  generic: "Что-то пошло не так. Попробуйте ещё раз."
+  expired: "Кнопка устарела, начните заново."

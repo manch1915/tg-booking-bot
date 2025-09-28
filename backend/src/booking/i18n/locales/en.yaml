@@ -1,0 +1,188 @@
+common:
+  back: "← Back"
+  menu: "Main menu"
+  cancel: "Cancel"
+  any_master: "Any barber"
+  minutes: "{n} min"
+  from_price: "from {price}"
+
+menu:
+  welcome: |-
+    <b>{name}</b>
+    {tagline}
+
+    Book in a minute: pick a service, a barber and a time that suits you. We'll remind you a day before and 2 hours before.
+  welcome_back: "Welcome back, {name}! What can we do for you?"
+  book: "Book a visit"
+  open_app: "Open the app"
+  my_bookings: "My bookings"
+  bonuses: "Bonuses and friends"
+  contacts: "Contacts"
+  language: "Русский"
+  app_button: "Book"
+
+book:
+  choose_category: "What are we doing today?"
+  choose_service: "<b>{category}</b>\nPick a service:"
+  service_line: "{name} · {price} · {duration}"
+  choose_master: |-
+    <b>{service}</b>
+    {description}
+
+    Who should take you?
+  master_line: "{name} · {price}"
+  master_line_rated: "{name} · {price} · ★ {rating}"
+  choose_day: "<b>{service}</b>, {master}\nPick a day:"
+  day_line: "{date} · {count}"
+  no_days: "We're fully booked for the next two weeks. You can join the waitlist for a specific day in the app."
+  choose_time: "<b>{date}</b>\n{service}, {master}\nFree times:"
+  no_time: "No free time left on this day."
+  waitlist_join: "Tell me if a slot opens"
+  waitlist_done: "Done. As soon as something opens up on {date}, we'll message you."
+  summary: |-
+    <b>Check your booking</b>
+
+    {service}
+    Barber: {master}
+    When: {when}
+    Price: {price}
+  summary_bonus: "Paid with bonuses: −{amount}"
+  summary_deposit: "Deposit now: {deposit}. Pay the rest at the shop."
+  summary_rules: "You can move or cancel with a full deposit refund until {deadline}."
+  use_bonus: "Use bonuses: {amount}"
+  bonus_used: "✓ Using {amount} in bonuses"
+  pay_card: "Pay deposit by card · {amount}"
+  pay_stars: "Pay deposit in Stars · {amount}"
+  confirm_on_site: "Confirm booking"
+  slot_taken: "Someone just took this time. Please pick another one."
+  hold_note: "This time is held for you for {minutes} minutes. Pay the deposit to confirm."
+  confirmed: |-
+    <b>You're booked</b>
+
+    {service}
+    {master}, {when}
+    {address}
+
+    We'll remind you a day before and 2 hours before.
+  payment_late_refunded: "Your payment came in after the slot was taken. We refunded it, please pick another time."
+
+invoice:
+  title: "Deposit: {service}"
+  description: "{master}, {when}. Counts towards your visit, refunded if you cancel {hours} h ahead."
+  tip_title: "Tip for your barber"
+  tip_description: "A thank-you from you to {master}"
+  label: "Deposit"
+
+bookings:
+  empty: "You have no bookings yet."
+  upcoming: "<b>Upcoming visits</b>"
+  line: "{when} · {service}"
+  card: |-
+    <b>{service}</b>
+    Barber: {master}
+    When: {when}
+    Price: {price}
+    Status: {status}
+  deposit_paid: "Deposit of {amount} paid"
+  deadline: "Free changes and deposit refund until {deadline}."
+  deadline_passed: "The free cancellation window has passed: the deposit stays with the shop if you cancel."
+  reschedule: "Move"
+  cancel: "Cancel"
+  pay: "Pay deposit"
+  cancel_confirm: "Cancel your visit on {when}?"
+  cancel_confirm_late: "Your visit is less than {hours} h away. If you cancel now, the {amount} deposit stays with the shop. Cancel anyway?"
+  cancel_yes: "Yes, cancel"
+  cancel_no: "No, keep it"
+  cancelled: "Booking cancelled."
+  cancelled_refund: "Booking cancelled. The deposit is on its way back."
+  cancelled_refund_pending: "Booking cancelled. The shop will process your deposit refund."
+  too_late_reschedule: "Visits can be moved up to {hours} h ahead. Please call us: {phone}"
+  rescheduled: "Done, your visit is now on {when}."
+  choose_new_day: "Which day suits you better?"
+  status:
+    pending_payment: "awaiting payment"
+    confirmed: "confirmed"
+    completed: "completed"
+    cancelled: "cancelled"
+    no_show: "no-show"
+
+bonuses:
+  info: |-
+    <b>Bonuses</b>
+    Balance: <b>{balance}</b>
+
+    You get {cashback}% of every visit back in bonuses and can pay up to {share}% of your next service with them.
+
+    <b>Bring a friend</b>
+    When a friend comes for their first haircut, you get {referral}. Your link:
+    {link}
+
+    Friends invited: {invited}
+  share: "Share the link"
+  share_text: "I book at {name} right in Telegram. Use my link to get bonuses on your first cut:"
+
+contacts:
+  text: |-
+    <b>{name}</b>
+    {address}
+    {phone}
+
+    Open daily from 10 am to 9 pm.
+  map: "Open in maps"
+
+review:
+  ask: "How was your visit with {master}? Rate it from 1 to 5."
+  ask_comment: "Thanks! A couple of words on what you liked or what we could do better? Or tap Skip."
+  skip: "Skip"
+  thanks: "Thanks for the review!"
+  tip_offer: "If you'd like, you can tip your barber in Stars."
+  tip_amount: "{amount} ⭐"
+  tip_thanks: "Tip sent. {master} will appreciate it."
+  already: "You've already left a review, thank you!"
+
+notify:
+  booking_confirmed: |-
+    <b>Booking confirmed</b>
+    {service}, {master}
+    {when}
+    {address}
+  reminder_day: |-
+    <b>See you tomorrow</b>
+    {service}, {master}
+    {when}
+
+    If your plans change, move or cancel before {deadline}.
+  reminder_soon: |-
+    Your visit is in 2 hours: {service}, {master}, {time}.
+    {address}
+  review_request: |-
+    How was your visit with {master}? Rate it from 1 to 5.
+    {cashback} in bonuses is already on your balance.
+  booking_cancelled: |-
+    The shop had to cancel your visit on {when} ({service}). If you paid a deposit, it will be refunded.
+    Shall we find another time?
+  booking_rescheduled: "Your visit has been moved: {service}, {master}, {when}."
+  master_new_booking: |-
+    <b>New booking</b>
+    {client} {phone}
+    {service}, {when}
+  master_cancelled: "<b>Cancelled</b>: {client}, {service}, {when}"
+  master_rescheduled: "<b>Moved</b>: {client}, {service}. Was {previous}, now {when}"
+  waitlist_slot: "A slot opened up on {date} with {master}. Be quick, the first to book gets it."
+  bonus_accrued: "{friend} came for their first haircut with your link. You've got {amount} in bonuses."
+  open_booking: "Book"
+  keep: "All good"
+
+master:
+  linked: "All set, {name}. New bookings and cancellations will come here. Today's list: /today"
+  bad_link: "This barber link is not valid. Ask the admin for a new one."
+  today_empty: "No bookings today."
+  today_title: "<b>Bookings for {date}</b>"
+  today_line: "{time} {service} · {client}"
+
+lang:
+  switched: "Language: English"
+
+errors:
+  generic: "Something went wrong. Please try again."
+  expired: "This button has expired, please start over."
