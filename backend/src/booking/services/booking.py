@@ -84,7 +84,10 @@ class BookingService:
 
     async def get(self, booking_id: int) -> Booking:
         booking = await self.session.scalar(
-            select(Booking).where(Booking.id == booking_id).options(*booking_options())
+            select(Booking)
+            .where(Booking.id == booking_id)
+            .options(*booking_options())
+            .execution_options(populate_existing=True)
         )
         if booking is None:
             raise NotFoundError("Booking not found")
@@ -365,7 +368,7 @@ class BookingService:
             )
             .group_by(Booking.master_id)
         )
-        load = dict(rows.tuples().all())
+        load: dict[int, int] = dict(rows.all())
         return min(master_ids, key=lambda mid: (load.get(mid, 0), mid))
 
     async def _lock_master(self, master_id: int) -> None:

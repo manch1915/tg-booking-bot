@@ -93,7 +93,9 @@ class Category(Base):
     name_en: Mapped[str] = mapped_column(String(80))
     sort: Mapped[int] = mapped_column(SmallInteger, default=0)
 
-    services: Mapped[list["Service"]] = relationship(back_populates="category")
+    services: Mapped[list["Service"]] = relationship(
+        back_populates="category", order_by="(Service.sort, Service.id)"
+    )
 
 
 class Service(Base):

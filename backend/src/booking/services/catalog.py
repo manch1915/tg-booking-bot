@@ -25,12 +25,15 @@ class CatalogService:
 
     async def categories(self) -> list[Category]:
         rows = await self.session.scalars(
-            select(Category).options(selectinload(Category.services)).order_by(Category.sort)
+            select(Category)
+            .options(
+                selectinload(Category.services)
+                .selectinload(Service.masters)
+                .selectinload(MasterService.master)
+            )
+            .order_by(Category.sort)
         )
-        categories = list(rows)
-        for category in categories:
-            category.services.sort(key=lambda s: (s.sort, s.id))
-        return categories
+        return list(rows)
 
     async def service(self, service_id: int) -> Service:
         service = await self.session.get(Service, service_id)
