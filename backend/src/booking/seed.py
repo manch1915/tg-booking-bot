@@ -12,7 +12,7 @@ import secrets
 from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, select, text
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from booking import demo_data as demo
@@ -75,6 +75,7 @@ class DemoSeeder:
         self.offers: dict[str, list[tuple[Service, int, int]]] = {}
         self.clients: list[Client] = []
         self.weights: list[int] = []
+        self.days_off: set[tuple[str, date]] = set()
 
     async def run(self) -> None:
         await self._business()
@@ -167,6 +168,7 @@ class DemoSeeder:
         # Ani is off for two days next week, Davit leaves early on Friday.
         today = self.now.astimezone(self.tz).date()
         next_wed = today + timedelta(days=(2 - today.weekday()) % 7 + 7)
+        self.days_off = {("ani", next_wed), ("ani", next_wed + timedelta(days=1))}
         self.session.add(
             TimeOff(
                 master_id=self.masters["ani"].id,
@@ -207,7 +209,7 @@ class DemoSeeder:
                 names.add(
                     f"{self.rng.choice(demo.FIRST_NAMES_EN)} {self.rng.choice(demo.LAST_NAMES_EN)}"
                 )
-        for index, name in enumerate(sorted(names)):
+        for name in sorted(names):
             is_ru = any("а" <= ch.lower() <= "я" for ch in name)
             digits = str(self.rng.randint(10_000_000, 99_999_999))
             client = Client(
@@ -215,14 +217,15 @@ class DemoSeeder:
                 phone=f"+374 {digits[:2]} {digits[2:5]} {digits[5:]}",
                 language=Language.RU if is_ru else Language.EN,
                 referral_code=new_referral_code(),
+                created_at=self.now - timedelta(days=self.rng.randint(25, 400)),
             )
-            client.created_at = self.now - timedelta(days=self.rng.randint(25, 400))
+            self.session.add(client)
+            self.clients.append(client)
+        await self.session.flush()
+        for index, client in enumerate(self.clients):
             if index > 10 and self.rng.random() < 0.12:
                 client.referred_by_id = self.rng.choice(self.clients[:10]).id
-            self.session.add(client)
-            await self.session.flush()
             self._bonus(client, 300, BonusKind.WELCOME, when=client.created_at)
-            self.clients.append(client)
         # A few regulars come far more often than the rest, like in any real shop.
         self.weights = [2 if i % 9 == 0 else 1 for i in range(len(self.clients))]
 
@@ -232,22 +235,10 @@ class DemoSeeder:
             day = today + timedelta(days=offset)
             for slug, master in self.masters.items():
                 hours = demo.SCHEDULES[slug].get(day.weekday())
-                if hours is None or await self._is_off(master, day):
+                if hours is None or (slug, day) in self.days_off:
                     continue
                 await self._fill_day(slug, master, day, offset, hours)
         await self.session.flush()
-
-    async def _is_off(self, master: Master, day: date) -> bool:
-        start = datetime.combine(day, time(12), tzinfo=self.tz)
-        found = await self.session.scalar(
-            select(func.count(TimeOff.id)).where(
-                TimeOff.master_id == master.id,
-                TimeOff.starts_at <= start,
-                TimeOff.ends_at > start,
-                TimeOff.ends_at - TimeOff.starts_at > timedelta(hours=12),
-            )
-        )
-        return bool(found)
 
     async def _fill_day(
         self, slug: str, master: Master, day: date, offset: int, hours: tuple[time, time]

@@ -98,6 +98,7 @@ bookings:
   cancelled_refund_pending: "Booking cancelled. The shop will process your deposit refund."
   too_late_reschedule: "Visits can be moved up to {hours} h ahead. Please call us: {phone}"
   rescheduled: "Done, your visit is now on {when}."
+  kept: "Great, see you then!"
   choose_new_day: "Which day suits you better?"
   status:
     pending_payment: "awaiting payment"

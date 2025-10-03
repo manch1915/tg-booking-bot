@@ -29,16 +29,16 @@ from booking.api.schemas import (
     TelegramAuthIn,
     WaitlistIn,
 )
-from booking.domain.enums import BookingSource, BookingStatus, Language, PaymentStatus
-from booking.i18n import fmt_datetime, t
+from booking.domain.enums import BookingSource, BookingStatus, PaymentStatus
 from booking.infra.db.models import BonusTransaction, Booking, Client, Payment
 from booking.services.auth import verify_init_data
 from booking.services.availability import AvailabilityService
 from booking.services.booking import BookingRequest
-from booking.services.business import business_tz, load_business
+from booking.services.business import load_business
 from booking.services.catalog import CatalogService
 from booking.services.clients import ClientService, TelegramProfile
 from booking.services.errors import AuthError, NotFoundError
+from booking.services.invoices import deposit_texts
 from booking.services.payments import PaymentIntent, PaymentService
 from booking.services.reviews import ReviewService
 from booking.services.waitlist import WaitlistService
@@ -60,21 +60,8 @@ async def _payment_intent(
     session: Session, payments: PaymentService, booking: Booking, payment: Payment
 ) -> PaymentIntent:
     business = await load_business(session)
-    lang = booking.client.language
-    ru = lang is Language.RU
-    master = booking.master.name if ru else booking.master.name_en
-    service = booking.service.name_ru if ru else booking.service.name_en
-    return await payments.intent(
-        payment,
-        title=t(lang, "invoice.title", service=service),
-        description=t(
-            lang,
-            "invoice.description",
-            master=master,
-            when=fmt_datetime(booking.starts_at, business_tz(business), lang),
-            hours=business.cancel_window_hours,
-        ),
-    )
+    title, description = deposit_texts(booking, business, booking.client.language)
+    return await payments.intent(payment, title=title, description=description)
 
 
 @router.post("/auth/telegram")

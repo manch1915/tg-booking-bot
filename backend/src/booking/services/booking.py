@@ -336,6 +336,12 @@ class BookingService:
             await self.complete(booking)
         return len(done)
 
+    async def suggest_master(self, service_id: int, starts_at: datetime) -> MasterOffer:
+        """The barber that "any free barber" would get at this time."""
+        return await self._pick_offer(
+            BookingRequest(service_id=service_id, starts_at=starts_at), strict=True
+        )
+
     async def _check_method(self, business: Business, request: BookingRequest) -> None:
         if request.payment_method is PaymentMethod.STARS and not business.stars_enabled:
             raise PolicyError("Stars payments are turned off")

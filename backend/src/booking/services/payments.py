@@ -108,6 +108,20 @@ class PaymentService:
         self.session.add(payment)
         return payment
 
+    def create_tip(self, booking: Booking, stars: int) -> Payment:
+        payment = Payment(
+            booking=booking,
+            provider=PaymentProvider.STARS,
+            purpose=PaymentPurpose.TIP,
+            status=PaymentStatus.PENDING,
+            amount=stars,
+            currency=STARS,
+            amount_base=stars * 100 // self.settings.stars_per_usd,
+            payload=f"tip_{secrets.token_hex(12)}",
+        )
+        self.session.add(payment)
+        return payment
+
     def invoice_for(self, payment: Payment, *, title: str, description: str) -> Invoice:
         token = None
         if payment.provider is PaymentProvider.TELEGRAM_CARD:
@@ -159,6 +173,8 @@ class PaymentService:
             return "already_processed"
         if payment.currency != currency or payment.amount != total:
             return "amount_mismatch"
+        if payment.purpose is PaymentPurpose.TIP:
+            return None
         booking = payment.booking
         expired = booking.hold_expires_at is not None and booking.hold_expires_at < self.clock.now()
         if booking.status is not BookingStatus.PENDING_PAYMENT or expired:

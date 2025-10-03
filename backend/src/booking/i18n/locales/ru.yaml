@@ -98,6 +98,7 @@ bookings:
   cancelled_refund_pending: "Запись отменена. Возврат депозита оформит администратор."
   too_late_reschedule: "Перенести можно не позже чем за {hours} ч до визита. Позвоните нам: {phone}"
   rescheduled: "Готово, запись перенесена на {when}."
+  kept: "Отлично, ждём вас!"
   choose_new_day: "На какой день перенести?"
   status:
     pending_payment: "ждёт оплаты"
