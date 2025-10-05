@@ -10,6 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from booking.api import errors
 from booking.api.routers import miniapp
+from booking.api.routers.admin import auth as admin_auth
+from booking.api.routers.admin import bookings as admin_bookings
+from booking.api.routers.admin import catalog as admin_catalog
+from booking.api.routers.admin import clients as admin_clients
+from booking.api.routers.admin import reports as admin_reports
 from booking.api.state import AppState
 from booking.config import Settings, get_settings
 from booking.infra.db.session import make_engine, make_sessionmaker
@@ -69,6 +74,8 @@ def create_app(settings: Settings | None = None, state: AppState | None = None) 
     )
     errors.install(app)
     app.include_router(miniapp.router)
+    for module in (admin_auth, admin_bookings, admin_catalog, admin_clients, admin_reports):
+        app.include_router(module.router)
 
     @app.get("/api/health", tags=["service"])
     async def health() -> dict[str, str]:
