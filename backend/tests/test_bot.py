@@ -136,8 +136,15 @@ async def test_master_links_telegram_with_deep_link(
             await session.scalars(select(Master).where(Master.name_en == "Mark Avetisyan"))
         ).one()
         assert master.telegram_id == 9100003
+        assert master.link_token is None
         master.telegram_id = None
+        master.link_token = token
         await session.commit()
+
+    # The same link does not work twice.
+    intruder = user(dispatcher, telegram, 9100099)
+    await intruder.send("/start master_")
+    assert "not valid" in intruder.last_text()
 
 
 async def test_expired_hold_rejects_checkout(

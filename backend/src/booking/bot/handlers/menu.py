@@ -37,10 +37,12 @@ def welcome_text(ctx: BotContext) -> str:
 async def link_master(message: Message, command: CommandObject, ctx: BotContext) -> None:
     token = (command.args or "").removeprefix("master_")
     master = await ctx.session.scalar(select(Master).where(Master.link_token == token))
-    if master is None or message.from_user is None:
+    if master is None or message.from_user is None or not token:
         await message.answer(ctx.t("master.bad_link"))
         return
+    # One-time link: a forwarded or leaked link cannot take over the barber's notifications.
     master.telegram_id = message.from_user.id
+    master.link_token = None
     await message.answer(ctx.t("master.linked", name=master.name))
 
 
