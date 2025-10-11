@@ -32,7 +32,8 @@ def _master_out(
     master: Master, state: AppState, rating: tuple[float, int] | None
 ) -> AdminMasterOut:
     link = None
-    if master.link_token:
+    # Hidden in the public demo: whoever opens the link gets this barber's notifications.
+    if master.link_token and not state.settings.demo_mode:
         link = f"https://t.me/{state.settings.bot_username}?start=master_{master.link_token}"
     return AdminMasterOut(
         master=mappers.master_out(master, rating),

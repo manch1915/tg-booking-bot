@@ -64,16 +64,19 @@ class NotificationScheduler:
             NotificationKind.MASTER_NEW_BOOKING, master_id=booking.master_id, booking_id=booking.id
         )
 
-    async def booking_rescheduled(self, booking: Booking, previous_start: datetime) -> None:
+    async def booking_rescheduled(
+        self, booking: Booking, previous_start: datetime, *, notify_client: bool
+    ) -> None:
         await self.cancel_pending(booking.id, CLIENT_VISIT_KINDS)
         self._visit_reminders(booking)
         payload = {"previous_start": previous_start.isoformat()}
-        self.enqueue(
-            NotificationKind.BOOKING_RESCHEDULED,
-            client_id=booking.client_id,
-            booking_id=booking.id,
-            payload=payload,
-        )
+        if notify_client:
+            self.enqueue(
+                NotificationKind.BOOKING_RESCHEDULED,
+                client_id=booking.client_id,
+                booking_id=booking.id,
+                payload=payload,
+            )
         self.enqueue(
             NotificationKind.MASTER_RESCHEDULED,
             master_id=booking.master_id,

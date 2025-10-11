@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from httpx import AsyncClient
 
 from .conftest import NOW
-from .test_api import api  # noqa: F401 - shared fixture
+from .test_api import api, signed_init_data  # noqa: F401 - shared fixture
 
 TODAY = NOW.date()
 
@@ -147,4 +147,24 @@ async def test_schedule_update_validates_intervals(api: AsyncClient) -> None:  #
     )
     assert bad.status_code == 422
     link = await api.post(f"/api/admin/masters/{mark['master']['id']}/link")
-    assert "start=master_" in link.json()["link_url"]
+    assert link.status_code == 200
+    assert not link.json()["telegram_linked"]
+
+
+def test_csv_cells_cannot_start_a_formula() -> None:
+    from booking.api.routers.admin.bookings import _cell
+
+    assert _cell("=HYPERLINK(1)") == "'=HYPERLINK(1)"
+    assert _cell("Арам") == "Арам"
+
+
+async def test_demo_admin_masks_real_telegram_users(api: AsyncClient) -> None:  # noqa: F811
+    init_data = signed_init_data(
+        {"id": 31337, "first_name": "Real", "last_name": "Person", "language_code": "en"}
+    )
+    await api.post("/api/app/auth/telegram", json={"init_data": init_data})
+    await login(api)
+    found = (await api.get("/api/admin/clients", params={"q": "Real"})).json()["items"]
+    assert [c["name"] for c in found] == ["Real P."]
+    masters = (await api.get("/api/admin/masters")).json()
+    assert all(m["link_url"] is None for m in masters)

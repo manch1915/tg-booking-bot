@@ -72,7 +72,16 @@ def booking_options() -> tuple[ExecutableOption, ...]:
 
 
 class BookingService:
-    def __init__(self, session: AsyncSession, clock: Clock, payments: PaymentService) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        clock: Clock,
+        payments: PaymentService,
+        *,
+        notify_clients: bool = True,
+    ) -> None:
+        # Off for the public demo admin, so visitors cannot message real Telegram users.
+        self.notify_clients = notify_clients
         self.session = session
         self.clock = clock
         self.payments = payments
@@ -155,7 +164,8 @@ class BookingService:
             self.payments.create_deposit(booking, client, business, request.payment_method)
         else:
             self.notifications.booking_confirmed(
-                booking, notify_client=request.source is not BookingSource.BOT
+                booking,
+                notify_client=request.source is not BookingSource.BOT and self.notify_clients,
             )
         await self.session.flush()
         return await self.get(booking.id)
@@ -226,7 +236,9 @@ class BookingService:
         )
         await self._return_bonus(booking)
         if was_confirmed:
-            await self.notifications.booking_cancelled(booking, notify_client=not by_client)
+            await self.notifications.booking_cancelled(
+                booking, notify_client=not by_client and self.notify_clients
+            )
             if booking.starts_at > now:
                 await self.waitlist.slot_freed(
                     booking.service_id, booking.master_id, booking.starts_at
@@ -272,7 +284,9 @@ class BookingService:
         except IntegrityError as exc:
             raise SlotUnavailableError("This time is no longer available") from exc
 
-        await self.notifications.booking_rescheduled(booking, previous_start)
+        await self.notifications.booking_rescheduled(
+            booking, previous_start, notify_client=not by_client and self.notify_clients
+        )
         await self.waitlist.slot_freed(booking.service_id, previous_master, previous_start)
         await self.session.flush()
         return await self.get(booking.id)

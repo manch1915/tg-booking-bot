@@ -44,6 +44,15 @@ def get_bookings(state: State, session: Session, payments: Payments) -> BookingS
 Bookings = Annotated[BookingService, Depends(get_bookings)]
 
 
+def get_admin_bookings(state: State, session: Session, payments: Payments) -> BookingService:
+    return BookingService(
+        session, state.clock, payments, notify_clients=not state.settings.demo_mode
+    )
+
+
+AdminBookings = Annotated[BookingService, Depends(get_admin_bookings)]
+
+
 async def current_client(
     state: State, session: Session, authorization: Annotated[str | None, Header()] = None
 ) -> Client:

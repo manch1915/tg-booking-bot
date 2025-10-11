@@ -131,7 +131,7 @@ class MasterIn(BaseModel):
     title_en: str = Field(default="", max_length=80)
     bio_ru: str = Field(default="", max_length=1000)
     bio_en: str = Field(default="", max_length=1000)
-    color: str = Field(default="#7A2E1F", pattern="^#[0-9A-Fa-f]{6}$")
+    color: str = Field(default="#1F4D3F", pattern="^#[0-9A-Fa-f]{6}$")
     photo_url: str = Field(default="", max_length=300)
     is_active: bool = True
 

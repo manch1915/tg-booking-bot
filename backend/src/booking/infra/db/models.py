@@ -136,7 +136,7 @@ class Master(Base):
     bio_ru: Mapped[str] = mapped_column(Text, default="")
     bio_en: Mapped[str] = mapped_column(Text, default="")
     photo_url: Mapped[str] = mapped_column(String(300), default="")
-    color: Mapped[str] = mapped_column(String(7), default="#7A2E1F")
+    color: Mapped[str] = mapped_column(String(7), default="#1F4D3F")
     telegram_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     link_token: Mapped[str | None] = mapped_column(String(40), unique=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

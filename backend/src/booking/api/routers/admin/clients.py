@@ -50,7 +50,9 @@ async def clients(
     rows, total = await ClientAdmin(session, state.clock).search(
         q=q, segment=segment, limit=per_page, offset=(page - 1) * per_page
     )
-    return ClientsPage(items=[client_row(*row) for row in rows], total=total)
+    return ClientsPage(
+        items=[client_row(*row, mask=state.settings.demo_mode) for row in rows], total=total
+    )
 
 
 async def _client_detail(session: Session, state: State, client: Client) -> ClientDetail:
@@ -80,11 +82,15 @@ async def _client_detail(session: Session, state: State, client: Client) -> Clie
             len(completed),
             completed[0].starts_at if completed else None,
             sum(b.price - b.bonus_spent for b in completed),
+            mask=state.settings.demo_mode,
         ),
-        notes=client.notes,
+        notes="" if state.settings.demo_mode and client.telegram_id else client.notes,
         referral_code=client.referral_code,
         invited=int(invited or 0),
-        bookings=[admin_booking_out(b, business, state.clock.now()) for b in bookings],
+        bookings=[
+            admin_booking_out(b, business, state.clock.now(), state.settings.demo_mode)
+            for b in bookings
+        ],
         bonuses=[
             BonusTxAdmin(
                 kind=t.kind.value, amount=t.amount, comment=t.comment, created_at=t.created_at
@@ -170,7 +176,7 @@ async def send_broadcast(
 
 
 @router.get("/reviews")
-async def reviews(_: CurrentAdmin, session: Session) -> list[ReviewRow]:
+async def reviews(_: CurrentAdmin, state: State, session: Session) -> list[ReviewRow]:
     rows = await session.scalars(
         select(Review)
         .options(
@@ -185,7 +191,7 @@ async def reviews(_: CurrentAdmin, session: Session) -> list[ReviewRow]:
             id=r.id,
             rating=r.rating,
             comment=r.comment,
-            client=r.client.name,
+            client=client_ref(r.client, state.settings.demo_mode).name,
             master_id=r.master_id,
             service=Localized(ru=r.booking.service.name_ru, en=r.booking.service.name_en),
             created_at=r.created_at,
@@ -195,7 +201,7 @@ async def reviews(_: CurrentAdmin, session: Session) -> list[ReviewRow]:
 
 
 @router.get("/waitlist")
-async def waitlist(_: CurrentAdmin, session: Session) -> list[WaitlistRow]:
+async def waitlist(_: CurrentAdmin, state: State, session: Session) -> list[WaitlistRow]:
     rows = await session.scalars(
         select(WaitlistEntry)
         .options(selectinload(WaitlistEntry.client), selectinload(WaitlistEntry.service))
@@ -205,7 +211,7 @@ async def waitlist(_: CurrentAdmin, session: Session) -> list[WaitlistRow]:
     return [
         WaitlistRow(
             id=w.id,
-            client=client_ref(w.client),
+            client=client_ref(w.client, state.settings.demo_mode),
             service=Localized(ru=w.service.name_ru, en=w.service.name_en),
             master_id=w.master_id,
             day=w.day,

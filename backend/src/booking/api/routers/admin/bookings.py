@@ -19,8 +19,8 @@ from booking.api.admin_schemas import (
     StatusIn,
     TimeOffOut,
 )
-from booking.api.deps import Bookings, CurrentAdmin, Session, State
-from booking.api.routers.admin.common import admin_booking_out
+from booking.api.deps import AdminBookings, CurrentAdmin, Session, State
+from booking.api.routers.admin.common import admin_booking_out, client_ref
 from booking.domain.enums import BookingSource, BookingStatus, PaymentMethod
 from booking.infra.db.models import Booking, Client
 from booking.services.admin import ClientAdmin, ScheduleAdmin
@@ -30,6 +30,8 @@ from booking.services.catalog import CatalogService
 from booking.services.errors import NotFoundError, PolicyError
 
 router = APIRouter(prefix="/api/admin", tags=["admin bookings"])
+
+FORMULA_STARTS = frozenset("=+-@\t\r")
 
 
 @router.get("/journal")
@@ -88,7 +90,7 @@ async def journal(
             )
             for o in await schedule.time_off(lo, hi)
         ],
-        bookings=[admin_booking_out(b, business, now) for b in rows],
+        bookings=[admin_booking_out(b, business, now, state.settings.demo_mode) for b in rows],
     )
 
 
@@ -104,7 +106,7 @@ async def list_bookings(
 ) -> list[AdminBookingOut]:
     business = await load_business(session)
     return [
-        admin_booking_out(b, business, state.clock.now())
+        admin_booking_out(b, business, state.clock.now(), state.settings.demo_mode)
         for b in await _bookings_between(session, start, end, status, master_id)
     ]
 
@@ -112,6 +114,7 @@ async def list_bookings(
 @router.get("/bookings.csv")
 async def export_bookings(
     _: CurrentAdmin,
+    state: State,
     session: Session,
     start: date,
     end: date,
@@ -120,6 +123,7 @@ async def export_bookings(
 ) -> StreamingResponse:
     business = await load_business(session)
     tz = business_tz(business)
+    demo = state.settings.demo_mode
     buffer = io.StringIO()
     # BOM so Excel opens Cyrillic correctly.
     buffer.write("﻿")
@@ -144,21 +148,23 @@ async def export_bookings(
     for b in await _bookings_between(session, start, end, status, master_id):
         local = b.starts_at.astimezone(tz)
         writer.writerow(
-            [
-                b.id,
-                local.date().isoformat(),
-                local.strftime("%H:%M"),
-                b.client.name,
-                b.client.phone or "",
-                b.service.name_ru,
-                b.master.name,
-                b.status.value,
-                b.source.value,
-                b.payment_method.value,
-                f"{b.price / 100:.2f}",
-                f"{b.bonus_spent / 100:.2f}",
-                f"{b.deposit / 100:.2f}",
-            ]
+            map(
+                _cell,
+                [
+                    b.id,
+                    local.date().isoformat(),
+                    local.strftime("%H:%M"),
+                    *_client_cells(b, demo),
+                    b.service.name_ru,
+                    b.master.name,
+                    b.status.value,
+                    b.source.value,
+                    b.payment_method.value,
+                    f"{b.price / 100:.2f}",
+                    f"{b.bonus_spent / 100:.2f}",
+                    f"{b.deposit / 100:.2f}",
+                ],
+            )
         )
     filename = f"bookings_{start.isoformat()}_{end.isoformat()}.csv"
     return StreamingResponse(
@@ -166,6 +172,17 @@ async def export_bookings(
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
+
+
+def _client_cells(booking: Booking, mask: bool) -> list[str]:
+    ref = client_ref(booking.client, mask)
+    return [ref.name, ref.phone or ""]
+
+
+def _cell(value: object) -> str:
+    # Client names come from Telegram; a leading "=" must not turn into an Excel formula.
+    text = str(value)
+    return f"'{text}" if text[:1] in FORMULA_STARTS else text
 
 
 async def _bookings_between(
@@ -196,15 +213,17 @@ async def _bookings_between(
 
 @router.get("/bookings/{booking_id}")
 async def booking_detail(
-    booking_id: int, _: CurrentAdmin, state: State, session: Session, bookings: Bookings
+    booking_id: int, _: CurrentAdmin, state: State, session: Session, bookings: AdminBookings
 ) -> AdminBookingOut:
     business = await load_business(session)
-    return admin_booking_out(await bookings.get(booking_id), business, state.clock.now())
+    return admin_booking_out(
+        await bookings.get(booking_id), business, state.clock.now(), state.settings.demo_mode
+    )
 
 
 @router.post("/bookings", status_code=201)
 async def manual_booking(
-    body: ManualBookingIn, _: CurrentAdmin, state: State, session: Session, bookings: Bookings
+    body: ManualBookingIn, _: CurrentAdmin, state: State, session: Session, bookings: AdminBookings
 ) -> AdminBookingOut:
     clients = ClientAdmin(session, state.clock)
     if body.client_id is not None:
@@ -228,7 +247,7 @@ async def manual_booking(
         strict=False,
     )
     business = await load_business(session)
-    return admin_booking_out(booking, business, state.clock.now())
+    return admin_booking_out(booking, business, state.clock.now(), state.settings.demo_mode)
 
 
 @router.post("/bookings/{booking_id}/status")
@@ -238,7 +257,7 @@ async def change_status(
     _: CurrentAdmin,
     state: State,
     session: Session,
-    bookings: Bookings,
+    bookings: AdminBookings,
 ) -> AdminBookingOut:
     booking = await bookings.get(booking_id)
     match body.action:
@@ -249,7 +268,9 @@ async def change_status(
         case _:
             await bookings.cancel(booking, by_client=False, reason=body.reason or "shop")
     business = await load_business(session)
-    return admin_booking_out(await bookings.get(booking_id), business, state.clock.now())
+    return admin_booking_out(
+        await bookings.get(booking_id), business, state.clock.now(), state.settings.demo_mode
+    )
 
 
 @router.post("/bookings/{booking_id}/reschedule")
@@ -259,11 +280,11 @@ async def reschedule(
     _: CurrentAdmin,
     state: State,
     session: Session,
-    bookings: Bookings,
+    bookings: AdminBookings,
 ) -> AdminBookingOut:
     booking = await bookings.get(booking_id)
     moved = await bookings.reschedule(
         booking, body.starts_at, master_id=body.master_id, by_client=False
     )
     business = await load_business(session)
-    return admin_booking_out(moved, business, state.clock.now())
+    return admin_booking_out(moved, business, state.clock.now(), state.settings.demo_mode)
