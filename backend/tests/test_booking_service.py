@@ -448,3 +448,29 @@ async def test_demo_checkout_is_refused_outside_demo_mode(
                 payment_method=PaymentMethod.CARD,
             ),
         )
+
+
+async def test_silent_service_never_queues_client_messages(
+    session: AsyncSession, clock: FixedClock, settings: Settings
+) -> None:
+    silent = BookingService(
+        session, clock, PaymentService(session, clock, settings), notify_clients=False
+    )
+    service = await service_by_name(session, "Classic haircut")
+    master = await master_by_name(session, "Ani Grigoryan")
+    slot = await first_free_slot(session, clock, service, master)
+    booking = await silent.create(
+        await some_client(session, 13),
+        BookingRequest(
+            service_id=service.id,
+            master_id=master.id,
+            starts_at=slot.starts_at,
+            source=BookingSource.ADMIN,
+        ),
+    )
+    await silent.cancel(booking, by_client=False)
+    rows = list(
+        await session.scalars(select(Notification).where(Notification.booking_id == booking.id))
+    )
+    assert rows
+    assert all(n.client_id is None for n in rows)

@@ -23,9 +23,10 @@ CLIENT_VISIT_KINDS = (
 class NotificationScheduler:
     """Writes rows to the notification outbox; the worker delivers them."""
 
-    def __init__(self, session: AsyncSession, clock: Clock) -> None:
+    def __init__(self, session: AsyncSession, clock: Clock, *, notify_clients: bool = True) -> None:
         self.session = session
         self.clock = clock
+        self.notify_clients = notify_clients
 
     def enqueue(
         self,
@@ -38,7 +39,9 @@ class NotificationScheduler:
         broadcast_id: int | None = None,
         chat_id: int | None = None,
         payload: dict[str, Any] | None = None,
-    ) -> Notification:
+    ) -> Notification | None:
+        if client_id is not None and not self.notify_clients:
+            return None
         notification = Notification(
             kind=kind,
             send_at=send_at or self.clock.now(),

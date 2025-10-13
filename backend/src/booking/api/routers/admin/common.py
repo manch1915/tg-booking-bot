@@ -7,10 +7,16 @@ from booking.infra.db.models import Booking, Business, Client
 
 def _masked(client: Client, mask: bool) -> tuple[str, str | None]:
     # The public demo admin must not show who of the real Telegram users tried the bot.
-    if not mask or client.telegram_id is None:
+    if not is_masked(client, mask):
         return client.name, client.phone
-    first, *rest = client.name.split()
-    return f"{first} {rest[0][0]}." if rest else first, None
+    parts = client.name.split()
+    if not parts:
+        return "Telegram", None
+    return f"{parts[0]} {parts[1][0]}." if len(parts) > 1 else parts[0], None
+
+
+def is_masked(client: Client, mask: bool) -> bool:
+    return mask and client.telegram_id is not None
 
 
 def client_ref(client: Client, mask: bool = False) -> ClientRef:
@@ -30,7 +36,7 @@ def admin_booking_out(
     return AdminBookingOut(
         **base.model_dump(),
         client=client_ref(booking.client, mask),
-        comment=booking.comment,
+        comment="" if is_masked(booking.client, mask) else booking.comment,
         created_at=booking.created_at,
         cancel_reason=booking.cancel_reason,
         payments=[

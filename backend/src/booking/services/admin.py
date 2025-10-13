@@ -289,7 +289,7 @@ class BroadcastService:
             note = scheduler.enqueue(
                 NotificationKind.BROADCAST, client_id=client.id, broadcast_id=broadcast.id
             )
-            if self.settings.demo_mode:
+            if note is not None and self.settings.demo_mode:
                 # Visitors of the public demo must not be able to message real Telegram users.
                 note.sent_at = self.clock.now()
                 note.error = "demo"

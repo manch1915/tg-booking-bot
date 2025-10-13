@@ -18,7 +18,12 @@ from booking.api.admin_schemas import (
     WaitlistRow,
 )
 from booking.api.deps import CurrentAdmin, Session, State
-from booking.api.routers.admin.common import admin_booking_out, client_ref, client_row
+from booking.api.routers.admin.common import (
+    admin_booking_out,
+    client_ref,
+    client_row,
+    is_masked,
+)
 from booking.api.schemas import Localized
 from booking.domain.enums import BookingStatus, Segment
 from booking.infra.db.models import (
@@ -190,7 +195,7 @@ async def reviews(_: CurrentAdmin, state: State, session: Session) -> list[Revie
         ReviewRow(
             id=r.id,
             rating=r.rating,
-            comment=r.comment,
+            comment="" if is_masked(r.client, state.settings.demo_mode) else r.comment,
             client=client_ref(r.client, state.settings.demo_mode).name,
             master_id=r.master_id,
             service=Localized(ru=r.booking.service.name_ru, en=r.booking.service.name_en),

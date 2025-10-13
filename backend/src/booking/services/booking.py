@@ -87,9 +87,9 @@ class BookingService:
         self.payments = payments
         self.catalog = CatalogService(session)
         self.availability = AvailabilityService(session, clock)
-        self.notifications = NotificationScheduler(session, clock)
+        self.notifications = NotificationScheduler(session, clock, notify_clients=notify_clients)
         self.bonuses = BonusService(session)
-        self.waitlist = WaitlistService(session, clock)
+        self.waitlist = WaitlistService(session, clock, notify_clients=notify_clients)
 
     async def get(self, booking_id: int) -> Booking:
         booking = await self.session.scalar(

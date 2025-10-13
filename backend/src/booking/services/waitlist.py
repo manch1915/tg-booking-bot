@@ -11,10 +11,10 @@ from booking.services.notifications import NotificationScheduler
 
 
 class WaitlistService:
-    def __init__(self, session: AsyncSession, clock: Clock) -> None:
+    def __init__(self, session: AsyncSession, clock: Clock, *, notify_clients: bool = True) -> None:
         self.session = session
         self.clock = clock
-        self.notifications = NotificationScheduler(session, clock)
+        self.notifications = NotificationScheduler(session, clock, notify_clients=notify_clients)
 
     async def join(
         self, client_id: int, service_id: int, day: date, master_id: int | None = None
