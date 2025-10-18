@@ -107,7 +107,7 @@ class DemoSeeder:
                 description_en=desc_en,
                 duration_minutes=minutes,
                 price=price,
-                photo_url=f"/img/services/{slug}.webp",
+                photo_url=demo.service_photo(slug),
                 is_popular=popular,
                 sort=sort,
             )
@@ -126,7 +126,7 @@ class DemoSeeder:
                 bio_ru=bio_ru,
                 bio_en=bio_en,
                 color=color,
-                photo_url=f"/img/masters/{slug}.webp",
+                photo_url=demo.master_photo(slug),
                 link_token=secrets.token_urlsafe(12),
                 sort=sort,
             )
@@ -247,7 +247,7 @@ class DemoSeeder:
         if offset < 0:
             load = self.rng.uniform(0.6, 0.85)
         else:
-            load = max(0.12, 0.75 - offset * 0.05) * self.rng.uniform(0.8, 1.15)
+            load = max(0.12, 0.55 - offset * 0.035) * self.rng.uniform(0.75, 1.1)
         schedule = DaySchedule(work=hours, breaks=[demo.LUNCH[slug]])
         shift_minutes = (
             datetime.combine(day, hours[1]) - datetime.combine(day, hours[0])

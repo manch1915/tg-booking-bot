@@ -160,9 +160,11 @@ class ClientService:
             )
             self.session.add(booking)
             await self.session.flush()
-            await self.bonuses.change(
+            tx = await self.bonuses.change(
                 client,
                 cashback_for(price, business.cashback_percent),
                 BonusKind.CASHBACK,
                 booking_id=booking.id,
             )
+            if tx is not None:
+                tx.created_at = booking.ends_at

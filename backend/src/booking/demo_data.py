@@ -10,7 +10,8 @@ BUSINESS = {
     "phone": "+374 10 52 18 40",
     "timezone": "Asia/Yerevan",
     "currency": "USD",
-    "cover_url": "/img/cover.webp",
+    "cover_url": "https://images.unsplash.com/photo-1759134198561-e2041049419c"
+    "?auto=format&fit=crop&w=1200&h=700&q=70",
 }
 
 CATEGORIES = [
@@ -383,3 +384,35 @@ REVIEWS_EN = [
     "Solid haircut, fair price. Will be back.",
     "The hot towel shave is worth every dollar.",
 ]
+
+# Free photos from Unsplash (unsplash.com/license), served by their CDN.
+UNSPLASH = "https://images.unsplash.com/photo-{id}?auto=format&fit=crop&q=70&{size}"
+SERVICE_PHOTOS = {
+    "classic-cut": "1503951914875-452162b0f3f1",
+    "skin-fade": "1635273051937-a0ddef9573b6",
+    "long-hair": "1657105052497-f996284ffff8",
+    "buzz-cut": "1493256338651-d82f7acb2b38",
+    "kids-cut": "1704072650662-76df3af134a7",
+    "beard-trim": "1599011176306-4a96f1516d4d",
+    "beard-towel": "1588398810131-73badafbd302",
+    "royal-shave": "1761148438883-e34e0289a214",
+    "cut-beard": "1599351431202-1e0f0137899a",
+    "father-son": "1521490683712-35a1cb235d1c",
+    "wash-style": "1648313143853-aa913f6ad44a",
+    "grey-blend": "1605497788044-5a32c7078486",
+    "face-care": "1465400325222-409b0b34be7c",
+}
+MASTER_PHOTOS = {
+    "artur": "1648817976768-a2fdcba20f9a",
+    "davit": "1676989859871-150f3579862a",
+    "ani": "1544005313-94ddf0286df2",
+    "mark": "1583692331507-fc0bd348695d",
+}
+
+
+def service_photo(slug: str) -> str:
+    return UNSPLASH.format(id=SERVICE_PHOTOS[slug], size="w=720&h=900")
+
+
+def master_photo(slug: str) -> str:
+    return UNSPLASH.format(id=MASTER_PHOTOS[slug], size="w=240&h=240&crop=faces")
