@@ -9,7 +9,10 @@ DEV_JWT_SECRET = "dev-only-secret-do-not-use-in-production"
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=(".env", "../.env"), env_file_encoding="utf-8", extra="ignore"
+        env_file=(".env", "../.env"),
+        env_file_encoding="utf-8",
+        env_ignore_empty=True,
+        extra="ignore",
     )
 
     env: Literal["dev", "test", "prod"] = "dev"
