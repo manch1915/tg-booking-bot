@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/manrope';
+@import '@fontsource/fira-sans-extra-condensed/500.css';
+@import '@fontsource/fira-sans-extra-condensed/600.css';
+@import '@fontsource/fira-sans-extra-condensed/700.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Porcelain tile, graphite, bottle-green leather, brass fittings, barber-pole red. */
+:root {
+  --bg: #eef0ec;
+  --surface: #ffffff;
+  --surface-2: #f6f7f4;
+  --ink: #15171a;
+  --muted: #5b625f;
+  --faint: #8b928e;
+  --line: #d9ddd7;
+  --accent: #1f4d3f;
+  --accent-ink: #ffffff;
+  --accent-soft: #dfe9e4;
+  --brass: #a8761f;
+  --brass-soft: #f4ead6;
+  --danger: #b3261e;
+  --danger-soft: #f8e1df;
+  --focus: #2f7d64;
+  --leather: #1f4d3f;
+  --leather-ink: #f3f1ea;
+  --leather-brass: #e0b25c;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0f1714;
+  --surface: #18221e;
+  --surface-2: #1e2a25;
+  --ink: #e9ede9;
+  --muted: #a3ada8;
+  --faint: #76817c;
+  --line: #2b3832;
+  --accent: #5fa88c;
+  --accent-ink: #0b1210;
+  --accent-soft: #1f3a31;
+  --brass: #d6a54e;
+  --brass-soft: #3a2f1b;
+  --danger: #ef7b72;
+  --danger-soft: #3b1f1d;
+  --focus: #7cc4a8;
+  --leather: #1a3d32;
+  --leather-ink: #f3f1ea;
+  --leather-brass: #e0b25c;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-brass: var(--brass);
+  --color-brass-soft: var(--brass-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-leather: var(--leather);
+  --color-leather-ink: var(--leather-ink);
+  --color-leather-brass: var(--leather-brass);
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sign: 'Fira Sans Extra Condensed', 'Arial Narrow', ui-sans-serif, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+@layer components {
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Barber-pole stripes: used only for the slot hold timer and the landing sign. */
+  .pole {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--danger) 0 10px,
+      var(--surface) 10px 20px,
+      var(--accent) 20px 30px,
+      var(--surface) 30px 40px
+    );
+    background-size: 56.57px 56.57px;
+    animation: pole-roll 1.6s linear infinite;
+  }
+
+  @keyframes pole-roll {
+    to {
+      background-position: 56.57px 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
