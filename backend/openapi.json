@@ -1797,6 +1797,50 @@
       }
     },
     "/api/admin/masters/{master_id}/time-off": {
+      "get": {
+        "tags": [
+          "admin catalogue"
+        ],
+        "summary": "List Time Off",
+        "operationId": "list_time_off_api_admin_masters__master_id__time_off_get",
+        "parameters": [
+          {
+            "name": "master_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Master Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TimeOffOut"
+                  },
+                  "title": "Response List Time Off Api Admin Masters  Master Id  Time Off Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "admin catalogue"

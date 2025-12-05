@@ -19,7 +19,7 @@ from booking.api.admin_schemas import (
 from booking.api.deps import CurrentAdmin, Session, State
 from booking.api.schemas import BusinessOut, Localized
 from booking.api.state import AppState
-from booking.infra.db.models import Category, Master, Service
+from booking.infra.db.models import Category, Master, Service, TimeOff
 from booking.services.admin import DaySpan, ScheduleAdmin, ServiceLink, services_with_links
 from booking.services.business import load_business
 from booking.services.catalog import CatalogService
@@ -121,6 +121,27 @@ async def new_link(
     schedule.new_link_token(master)
     await session.flush()
     return _master_out(master, state, (await CatalogService(session).ratings()).get(master.id))
+
+
+@router.get("/masters/{master_id}/time-off")
+async def list_time_off(
+    master_id: int, _: CurrentAdmin, state: State, session: Session
+) -> list[TimeOffOut]:
+    rows = await session.scalars(
+        select(TimeOff)
+        .where(TimeOff.master_id == master_id, TimeOff.ends_at > state.clock.now())
+        .order_by(TimeOff.starts_at)
+    )
+    return [
+        TimeOffOut(
+            id=o.id,
+            master_id=o.master_id,
+            starts_at=o.starts_at,
+            ends_at=o.ends_at,
+            reason=o.reason,
+        )
+        for o in rows
+    ]
 
 
 @router.post("/masters/{master_id}/time-off", status_code=201)

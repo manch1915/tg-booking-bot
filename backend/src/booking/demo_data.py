@@ -362,7 +362,7 @@ LAST_NAMES_EN = [
     "Torosyan",
     "Keller",
 ]
-CLIENT_COUNT = 360
+CLIENT_COUNT = 700
 
 REVIEWS_RU = [
     "Артур сделал ровно то, что я хотел, хотя объяснял я так себе.",

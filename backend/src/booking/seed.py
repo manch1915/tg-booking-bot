@@ -58,7 +58,7 @@ from booking.services.clients import new_referral_code
 
 log = logging.getLogger(__name__)
 
-HISTORY_DAYS = 21
+HISTORY_DAYS = 75
 FUTURE_DAYS = 14
 NO_PRICE_DELTA = {"wash-style", "face-care", "kids-cut"}
 
