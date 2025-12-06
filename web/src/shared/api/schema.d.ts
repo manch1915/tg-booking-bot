@@ -559,7 +559,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Time Off */
+        get: operations["list_time_off_api_admin_masters__master_id__time_off_get"];
         put?: never;
         /** Add Time Off */
         post: operations["add_time_off_api_admin_masters__master_id__time_off_post"];
@@ -3027,6 +3028,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminMasterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_time_off_api_admin_masters__master_id__time_off_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                master_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeOffOut"][];
                 };
             };
             /** @description Validation Error */
