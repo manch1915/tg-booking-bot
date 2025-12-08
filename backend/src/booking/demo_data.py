@@ -10,7 +10,7 @@ BUSINESS = {
     "phone": "+374 10 52 18 40",
     "timezone": "Asia/Yerevan",
     "currency": "USD",
-    "cover_url": "https://images.unsplash.com/photo-1759134198561-e2041049419c"
+    "cover_url": "https://images.unsplash.com/photo-1592647420148-bfcc177e2117"
     "?auto=format&fit=crop&w=1200&h=700&q=70",
 }
 

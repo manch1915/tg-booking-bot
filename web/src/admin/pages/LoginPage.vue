@@ -34,7 +34,7 @@ async function go(kind: 'demo' | 'password'): Promise<void> {
   <main class="grid min-h-dvh lg:grid-cols-[1.1fr_1fr]">
     <section class="relative hidden overflow-hidden bg-leather text-leather-ink lg:block">
       <img
-        src="https://images.unsplash.com/photo-1759134198561-e2041049419c?auto=format&fit=crop&w=1400&h=1600&q=70"
+        src="https://images.unsplash.com/photo-1592647420148-bfcc177e2117?auto=format&fit=crop&w=1400&h=1600&q=70"
         alt=""
         class="absolute inset-0 size-full object-cover opacity-35 mix-blend-luminosity"
       />
