@@ -94,6 +94,11 @@ function pay(): void {
   void router.push({ name: 'pay', params: { id: selected.value.id } })
 }
 
+function rate(n: number): void {
+  rating.value = n
+  haptic()
+}
+
 async function sendReview(): Promise<void> {
   if (!selected.value || !rating.value) return
   busy.value = true
@@ -292,10 +297,7 @@ async function sendReview(): Promise<void> {
             :aria-checked="rating === n"
             :aria-label="String(n)"
             class="grid size-11 place-items-center rounded-full"
-            @click="
-              rating = n
-              haptic()
-            "
+            @click="rate(n)"
           >
             <Star
               :size="28"
