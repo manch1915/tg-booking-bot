@@ -77,6 +77,10 @@ function offsOf(masterId: number) {
     .filter((o) => o.to > o.from)
 }
 
+function isShort(b: Schemas['AdminBookingOut']): boolean {
+  return (new Date(b.ends_at).getTime() - new Date(b.starts_at).getTime()) / 60_000 <= 30
+}
+
 function blockStyle(b: Schemas['AdminBookingOut']) {
   const start = minutesOfDay(b.starts_at, tz.value)
   const end = minutesOfDay(b.ends_at, tz.value) || 24 * 60
@@ -192,7 +196,7 @@ function clickColumn(event: MouseEvent, masterId: number): void {
           :key="b.id"
           type="button"
           class="booking absolute left-1 overflow-hidden rounded-lg px-2 py-1 text-left text-xs leading-tight transition-shadow hover:shadow-md focus-visible:z-10"
-          :class="b.status"
+          :class="[b.status, { compact: isShort(b) }]"
           :style="blockStyle(b)"
           @click="emit('open', b)"
         >
@@ -240,6 +244,22 @@ function clickColumn(event: MouseEvent, masterId: number): void {
   background: color-mix(in oklab, var(--m) 16%, var(--surface));
   border-left: 3px solid var(--m);
   color: var(--ink);
+}
+
+.booking.compact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-block: 0;
+}
+
+.booking.compact > span {
+  display: inline;
+  flex-shrink: 0;
+}
+
+.booking.compact > span:nth-child(3) {
+  display: none;
 }
 
 .booking.pending_payment {

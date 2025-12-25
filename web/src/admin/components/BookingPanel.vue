@@ -108,7 +108,12 @@ const move = useMutation({
       </template>
       <template v-if="current.deposit">
         <dt class="text-muted">{{ $t('booking.deposit') }}</dt>
-        <dd class="num">{{ fmt(current.deposit) }} · {{ current.deposit_status ?? '—' }}</dd>
+        <dd class="num">
+          {{ fmt(current.deposit)
+          }}<template v-if="current.deposit_status">
+            · {{ $t(`payment.status.${current.deposit_status}`) }}</template
+          >
+        </dd>
       </template>
       <dt class="text-muted">{{ $t('booking.client') }}</dt>
       <dd class="flex flex-wrap items-center gap-3">
@@ -148,9 +153,10 @@ const move = useMutation({
       <h3 class="text-sm font-semibold">{{ $t('booking.payments') }}</h3>
       <ul class="mt-2 divide-y divide-line rounded-xl border border-line text-sm">
         <li v-for="p in current.payments" :key="p.id" class="flex justify-between px-3 py-2">
-          <span>{{ p.purpose }} · {{ p.provider }}</span>
+          <span>{{ $t(`payment.${p.purpose}`) }} · {{ $t(`payment.provider.${p.provider}`) }}</span>
           <span class="num"
-            >{{ p.currency === 'XTR' ? `${p.amount} ★` : fmt(p.amount) }} · {{ p.status }}</span
+            >{{ p.currency === 'XTR' ? `${p.amount} ★` : fmt(p.amount) }} ·
+            {{ $t(`payment.status.${p.status}`) }}</span
           >
         </li>
       </ul>

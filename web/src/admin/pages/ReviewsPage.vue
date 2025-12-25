@@ -63,7 +63,9 @@ const master = (id: number | null) => masters.data.value?.find((m) => m.master.i
         >
           <p class="flex justify-between gap-2">
             <span class="font-semibold">{{ w.client.name }}</span>
-            <span class="rounded-full bg-surface-2 px-2 py-0.5 text-xs">{{ w.status }}</span>
+            <span class="rounded-full bg-surface-2 px-2 py-0.5 text-xs">{{
+              $t(`waitlistStatus.${w.status}`)
+            }}</span>
           </p>
           <p class="mt-1 text-muted">
             {{ w.service[lang] }} · {{ day(w.day, lang, tz, true) }}

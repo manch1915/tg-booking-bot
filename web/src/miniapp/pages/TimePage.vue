@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import { ApiError, type Schemas } from '@/shared/api/client'
-import { day as dayLabel, localDate, money, time } from '@/shared/format'
+import { day as dayLabel, localDate, money, time, weekdayShort } from '@/shared/format'
 
 import Avatar from '../components/Avatar.vue'
 import LoadState from '../components/LoadState.vue'
@@ -229,7 +229,7 @@ useMainAction(
           @click="pickDay(d)"
         >
           <span class="text-xs font-semibold opacity-70">
-            {{ dayLabel(d.day, lang, tz).split(',')[0] }}
+            {{ weekdayShort(d.day, lang) }}
           </span>
           <span class="font-sign text-[26px] leading-tight font-semibold num">
             {{ Number(d.day.slice(8)) }}

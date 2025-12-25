@@ -302,7 +302,7 @@ const removeOff = useMutation({
             class="flex items-center justify-between gap-2 rounded-lg bg-surface-2 px-3 py-2"
           >
             <span
-              >{{ dateTime(off.starts_at, lang, tz) }} — {{ dateTime(off.ends_at, lang, tz)
+              >{{ dateTime(off.starts_at, lang, tz) }} – {{ dateTime(off.ends_at, lang, tz)
               }}<template v-if="off.reason"> · {{ off.reason }}</template></span
             >
             <button

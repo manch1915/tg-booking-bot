@@ -57,7 +57,7 @@ const title = computed(() => {
   if (!day.value) return ''
   if (view.value === 'day') return dayLabel(day.value, lang.value, tz.value, true)
   const end = addDays(start.value, 6)
-  return `${dayLabel(start.value, lang.value, tz.value)} — ${dayLabel(end, lang.value, tz.value)}`
+  return `${dayLabel(start.value, lang.value, tz.value)} – ${dayLabel(end, lang.value, tz.value)}`
 })
 
 function shift(direction: number): void {

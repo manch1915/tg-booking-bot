@@ -285,7 +285,7 @@ const saveNotes = useMutation({
           class="flex justify-between gap-3"
         >
           <span class="text-muted"
-            >{{ day(tx.created_at, lang, tz) }} · {{ tx.kind
+            >{{ day(tx.created_at, lang, tz) }} · {{ $t(`bonusKind.${tx.kind}`)
             }}<template v-if="tx.comment"> · {{ tx.comment }}</template></span
           >
           <span class="num" :class="tx.amount > 0 ? 'text-accent' : 'text-muted'"

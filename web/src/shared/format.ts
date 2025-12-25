@@ -30,6 +30,12 @@ export function day(isoOrDate: string, locale: Locale, timeZone: string, long = 
   }).format(date)
 }
 
+export function weekdayShort(isoDate: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), { weekday: 'short', timeZone: 'UTC' }).format(
+    new Date(`${isoDate}T12:00:00Z`),
+  )
+}
+
 export function dateTime(iso: string, locale: Locale, timeZone: string): string {
   return `${day(iso, locale, timeZone)}, ${time(iso, timeZone)}`
 }
