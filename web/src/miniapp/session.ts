@@ -1,3 +1,4 @@
+import type { QueryClient } from '@tanstack/vue-query'
 import { reactive } from 'vue'
 
 import { createApi, type Schemas } from '@/shared/api/client'
@@ -77,6 +78,14 @@ export async function startSession(): Promise<void> {
   } catch {
     session.failed = true
   }
+}
+
+export function prefetchCatalog(queryClient: QueryClient): void {
+  void queryClient.prefetchQuery({
+    queryKey: ['catalog'],
+    queryFn: () => api.get<Schemas['CatalogOut']>('/api/app/catalog'),
+    staleTime: 5 * 60_000,
+  })
 }
 
 export async function refreshClient(): Promise<void> {

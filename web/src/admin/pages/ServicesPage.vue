@@ -5,6 +5,7 @@ import { ref } from 'vue'
 
 import type { Schemas } from '@/shared/api/client'
 import { minutesLabel } from '@/shared/format'
+import { photo } from '@/shared/photo'
 
 import { api } from '../api'
 import SidePanel from '../components/SidePanel.vue'
@@ -90,7 +91,7 @@ const save = useMutation({
         @click="edit(s)"
       >
         <img
-          :src="s.photo_url"
+          :src="photo(s.photo_url, 80)"
           alt=""
           class="size-20 shrink-0 rounded-xl bg-surface-2 object-cover"
           loading="lazy"

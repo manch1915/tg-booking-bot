@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 
 import type { Schemas } from '@/shared/api/client'
 import { dateTime, minutesLabel, money } from '@/shared/format'
+import { photo } from '@/shared/photo'
 
 import Avatar from '../components/Avatar.vue'
 import LoadState from '../components/LoadState.vue'
@@ -119,7 +120,7 @@ function pickCategory(id: number | null): void {
           class="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none]"
         >
           <button
-            v-for="service in popular"
+            v-for="(service, index) in popular"
             :key="service.id"
             type="button"
             class="w-[148px] shrink-0 snap-start overflow-hidden rounded-[18px] bg-surface text-left transition-transform active:scale-[0.98]"
@@ -127,10 +128,13 @@ function pickCategory(id: number | null): void {
           >
             <div class="aspect-[4/5] bg-surface-2">
               <img
-                :src="service.photo_url"
+                :src="photo(service.photo_url, 148, 185)"
                 :alt="service.name[lang]"
                 class="size-full object-cover"
-                loading="lazy"
+                width="148"
+                height="185"
+                :loading="index < 2 ? 'eager' : 'lazy'"
+                :fetchpriority="index === 0 ? 'high' : 'auto'"
               />
             </div>
             <div class="p-3">
@@ -183,8 +187,10 @@ function pickCategory(id: number | null): void {
               @click="open(service)"
             >
               <img
-                :src="service.photo_url"
+                :src="photo(service.photo_url, 56)"
                 alt=""
+                width="56"
+                height="56"
                 class="size-14 shrink-0 rounded-xl bg-surface-2 object-cover"
                 loading="lazy"
               />

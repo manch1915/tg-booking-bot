@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 
 import type { Schemas } from '@/shared/api/client'
+import { photo } from '@/shared/photo'
 
 withDefaults(defineProps<{ master: Schemas['MasterOut']; lang: 'ru' | 'en'; size?: number }>(), {
   size: 36,
@@ -22,7 +23,7 @@ const broken = ref(false)
   >
     <img
       v-if="master.photo_url && !broken"
-      :src="master.photo_url"
+      :src="photo(master.photo_url, size)"
       :alt="master.name[lang]"
       class="size-full object-cover"
       loading="lazy"

@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 
 import { ApiError, type Schemas } from '@/shared/api/client'
 import { dateTime, money } from '@/shared/format'
+import { photo } from '@/shared/photo'
 
 import Avatar from '../components/Avatar.vue'
 import PageHeader from '../components/PageHeader.vue'
@@ -142,7 +143,11 @@ useMainAction(
       class="mx-4 mt-2 overflow-hidden rounded-[20px] bg-surface"
     >
       <div class="flex gap-3 p-4">
-        <img :src="service.photo_url" alt="" class="size-16 rounded-xl bg-surface-2 object-cover" />
+        <img
+          :src="photo(service.photo_url, 64)"
+          alt=""
+          class="size-16 rounded-xl bg-surface-2 object-cover"
+        />
         <div class="min-w-0">
           <p class="font-semibold">{{ service.name[lang] }}</p>
           <p class="font-sign text-2xl leading-tight font-semibold num">

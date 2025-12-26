@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { photo } from '@/shared/photo'
 
 const props = withDefaults(
   defineProps<{ src: string; name: string; color?: string; size?: number }>(),
@@ -30,7 +31,7 @@ const initials = computed(() =>
   >
     <img
       v-if="src && !broken"
-      :src="src"
+      :src="photo(src, size)"
       :alt="name"
       class="size-full object-cover"
       loading="lazy"

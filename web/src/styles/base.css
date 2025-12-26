@@ -2,7 +2,6 @@
 @source '../';
 @source '../../index.html';
 @import '@fontsource-variable/manrope';
-@import '@fontsource/fira-sans-extra-condensed/500.css';
 @import '@fontsource/fira-sans-extra-condensed/600.css';
 @import '@fontsource/fira-sans-extra-condensed/700.css';
 
@@ -15,12 +14,12 @@
   --surface-2: #f6f7f4;
   --ink: #15171a;
   --muted: #5b625f;
-  --faint: #8b928e;
+  --faint: #666d69;
   --line: #d9ddd7;
   --accent: #1f4d3f;
   --accent-ink: #ffffff;
   --accent-soft: #dfe9e4;
-  --brass: #a8761f;
+  --brass: #85600f;
   --brass-soft: #f4ead6;
   --danger: #b3261e;
   --danger-soft: #f8e1df;
@@ -37,7 +36,7 @@
   --surface-2: #1e2a25;
   --ink: #e9ede9;
   --muted: #a3ada8;
-  --faint: #76817c;
+  --faint: #8f9a95;
   --line: #2b3832;
   --accent: #5fa88c;
   --accent-ink: #0b1210;

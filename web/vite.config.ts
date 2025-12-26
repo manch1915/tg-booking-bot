@@ -35,7 +35,7 @@ export default defineConfig({
     strictPort: true,
     proxy: { '/api': 'http://127.0.0.1:8017' },
   },
-  preview: { port: 5177 },
+  preview: { port: 5178, proxy: { '/api': 'http://127.0.0.1:8017' } },
   build: {
     rollupOptions: {
       input: {

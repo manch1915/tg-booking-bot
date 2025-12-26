@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 import { minutesLabel, money } from '@/shared/format'
+import { photo } from '@/shared/photo'
 
 import Avatar from '../components/Avatar.vue'
 import LoadState from '../components/LoadState.vue'
@@ -62,7 +63,7 @@ useMainAction(
     <template v-if="service">
       <div class="mx-4 overflow-hidden rounded-[22px] bg-surface-2">
         <img
-          :src="service.photo_url"
+          :src="photo(service.photo_url, 400, 275)"
           :alt="service.name[lang]"
           class="aspect-[16/11] w-full object-cover"
         />
