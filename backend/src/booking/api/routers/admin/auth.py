@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Request, Response
 from sqlalchemy import select
 
 from booking.api.admin_schemas import AdminOut, LoginIn
-from booking.api.deps import ADMIN_COOKIE, CurrentAdmin, Session, State
+from booking.api.deps import ADMIN_COOKIE, CurrentAdmin, Session, State, current_admin
 from booking.api.state import AppState
 from booking.infra.db.models import AdminUser
 from booking.services.auth import check_password
@@ -53,6 +53,16 @@ async def demo_login(response: Response, state: State, session: Session) -> Admi
 @router.post("/logout", status_code=204)
 async def logout(response: Response) -> None:
     response.delete_cookie(ADMIN_COOKIE, path="/api/admin")
+
+
+@router.get("/session")
+async def session_info(request: Request, state: State, session: Session) -> AdminOut | None:
+    """Like /me, but answers "nobody" with null instead of 401, for the first page load."""
+    try:
+        admin = await current_admin(request, state, session)
+    except AuthError:
+        return None
+    return _admin_out(admin, state)
 
 
 @router.get("/me")

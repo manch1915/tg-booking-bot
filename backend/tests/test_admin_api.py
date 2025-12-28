@@ -20,6 +20,13 @@ async def test_admin_requires_cookie(api: AsyncClient) -> None:  # noqa: F811
     assert response.status_code == 401
 
 
+async def test_session_is_null_without_cookie(api: AsyncClient) -> None:  # noqa: F811
+    api.cookies.clear()
+    response = await api.get("/api/admin/auth/session")
+    assert response.status_code == 200
+    assert response.json() is None
+
+
 async def test_password_login(api: AsyncClient) -> None:  # noqa: F811
     bad = await api.post(
         "/api/admin/auth/login", json={"email": "owner@brassblade.demo", "password": "nope"}

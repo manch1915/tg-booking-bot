@@ -16,7 +16,7 @@ export const api = createApi({
 
 export async function loadAdmin(): Promise<void> {
   try {
-    auth.admin = await api.get<Schemas['AdminOut']>('/api/admin/auth/me')
+    auth.admin = await api.get<Schemas['AdminOut'] | null>('/api/admin/auth/session')
   } catch {
     auth.admin = null
   } finally {
