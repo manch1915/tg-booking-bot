@@ -1,0 +1,85 @@
+name: brass-blade
+
+x-backend: &backend
+  image: brass-blade-backend:local
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+asyncpg://booking:booking@db:5432/booking
+    REDIS_URL: redis://redis:6379/0
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: booking
+      POSTGRES_PASSWORD: booking
+      POSTGRES_DB: booking
+    ports:
+      - "127.0.0.1:5447:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking"]
+      interval: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "127.0.0.1:6387:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    <<: *backend
+    # The one service that builds the backend image; api, bot and worker reuse it.
+    build:
+      context: ./backend
+    command: ["sh", "-c", "alembic upgrade head && python -m booking.seed --if-empty"]
+    restart: "no"
+
+  api:
+    <<: *backend
+    command: ["booking-api"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  bot:
+    <<: *backend
+    # Starts only with a token: docker compose --profile bot up
+    profiles: ["bot"]
+    command: ["booking-bot"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  worker:
+    <<: *backend
+    command: ["booking-worker"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    image: brass-blade-web:local
+    build:
+      context: ./web
+    ports:
+      - "127.0.0.1:8087:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:
