@@ -3,7 +3,7 @@ import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 
 import type { Schemas } from '@/shared/api/client'
 
-import { api } from './session'
+import { api, session } from './session'
 
 export function useCatalog() {
   return useQuery({
@@ -60,6 +60,7 @@ export function useBookings() {
   return useQuery({
     queryKey: ['bookings'],
     queryFn: () => api.get<Schemas['BookingOut'][]>('/api/app/bookings'),
+    enabled: computed(() => session.token !== null),
   })
 }
 
@@ -67,5 +68,6 @@ export function useBonusHistory() {
   return useQuery({
     queryKey: ['bonuses'],
     queryFn: () => api.get<Schemas['BonusTxOut'][]>('/api/app/me/bonuses'),
+    enabled: computed(() => session.token !== null),
   })
 }

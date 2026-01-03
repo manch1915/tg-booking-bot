@@ -18,6 +18,9 @@ const telegramScheme = ref(webApp?.colorScheme)
 const dark = computed(() => (inTelegram ? telegramScheme.value === 'dark' : prefersDark.value))
 const inset = ref(topInset())
 const topLevel = computed(() => ['home', 'bookings', 'profile'].includes(String(route.name)))
+// Browsing the catalogue needs no account, so only these screens wait for sign-in.
+const publicScreen = computed(() => ['home', 'service', 'time'].includes(String(route.name)))
+const loading = computed(() => !session.business || (!publicScreen.value && !session.ready))
 
 watchEffect(() => {
   document.documentElement.classList.toggle('dark', dark.value)
@@ -54,7 +57,7 @@ onMounted(() => {
         </button>
       </div>
     </div>
-    <div v-else-if="!session.ready" class="grid min-h-dvh place-items-center" aria-busy="true">
+    <div v-else-if="loading" class="grid min-h-dvh place-items-center" aria-busy="true">
       <span class="pole block h-2 w-24 overflow-hidden rounded-full" aria-hidden="true" />
     </div>
     <template v-else>

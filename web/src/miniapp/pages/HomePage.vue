@@ -61,7 +61,11 @@ function pickCategory(id: number | null): void {
     <section class="px-4 pt-5 pb-4">
       <div class="flex items-start justify-between gap-3">
         <div>
-          <p class="text-sm text-muted">{{ $t('home.hello', { name: session.client?.name }) }}</p>
+          <p class="min-h-5 text-sm text-muted">
+            <template v-if="session.client">{{
+              $t('home.hello', { name: session.client.name })
+            }}</template>
+          </p>
           <h1 class="mt-1 font-sign text-[40px] leading-[0.95] font-bold tracking-[0.005em]">
             {{ business.name }}
           </h1>

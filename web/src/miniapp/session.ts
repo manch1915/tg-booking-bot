@@ -65,13 +65,13 @@ async function signIn(): Promise<Schemas['AuthOut']> {
 export async function startSession(): Promise<void> {
   session.failed = false
   try {
-    const [auth, business] = await Promise.all([
-      signIn(),
-      api.get<Schemas['BusinessOut']>('/api/app/business'),
-    ])
+    // The shop info is enough to draw the catalogue; signing in finishes in the background.
+    const business = api
+      .get<Schemas['BusinessOut']>('/api/app/business')
+      .then((b) => (session.business = b))
+    const [auth] = await Promise.all([signIn(), business])
     session.token = auth.token
     session.client = auth.client
-    session.business = business
     if (!inTelegram) remember(auth.token)
     setLocale(auth.client.language)
     session.ready = true
