@@ -1,0 +1,9 @@
+booking.example.com {
+	encode zstd gzip
+	reverse_proxy brass-blade-web:80
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+}

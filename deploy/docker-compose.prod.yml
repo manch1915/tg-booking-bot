@@ -1,0 +1,16 @@
+# Server override: no ports on the host, the web container joins the network of the shared Caddy.
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml --profile bot up -d --build
+services:
+  db:
+    ports: !reset []
+  redis:
+    ports: !reset []
+  web:
+    ports: !reset []
+    container_name: brass-blade-web
+    networks: [default, caddy]
+
+networks:
+  caddy:
+    external: true
+    name: infra_default
