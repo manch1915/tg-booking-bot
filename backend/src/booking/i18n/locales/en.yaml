@@ -181,6 +181,14 @@ master:
   today_title: "<b>Bookings for {date}</b>"
   today_line: "{time} {service} · {client}"
 
+profile:
+  name: "Brass & Blade · booking"
+  short: "Book Brass & Blade barbershop: service, barber, time and deposit in a minute."
+  description: |-
+    Book a visit to Brass & Blade barbershop in a minute: pick a service, a barber and a free time, then pay a deposit in Stars or by card.
+
+    We remind you a day before and 2 hours before, and you can move or cancel right here. This is a demo: card payments are test ones and the data resets every night.
+
 lang:
   switched: "Language: English"
 

@@ -1,6 +1,7 @@
 import logging
 
 from aiogram import Bot, Dispatcher
+from aiogram.exceptions import TelegramAPIError
 from aiogram.fsm.storage.base import BaseStorage
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand, MenuButtonWebApp, WebAppInfo
@@ -36,6 +37,19 @@ def build_dispatcher(
     return dp
 
 
+async def _sync_profile(bot: Bot, lang: Language, code: str | None) -> None:
+    name = t(lang, "profile.name")
+    if (await bot.get_my_name(language_code=code)).name != name:
+        await bot.set_my_name(name=name, language_code=code)
+    short = t(lang, "profile.short")
+    current_short = await bot.get_my_short_description(language_code=code)
+    if current_short.short_description != short:
+        await bot.set_my_short_description(short_description=short, language_code=code)
+    description = t(lang, "profile.description")
+    if (await bot.get_my_description(language_code=code)).description != description:
+        await bot.set_my_description(description=description, language_code=code)
+
+
 async def configure_bot(bot: Bot, public_url: str) -> None:
     for lang in Language:
         await bot.set_my_commands(
@@ -46,6 +60,14 @@ async def configure_bot(bot: Bot, public_url: str) -> None:
             ],
             language_code=lang.value,
         )
+    # The profile without a language code is what users of any other language see.
+    profiles = [(Language.EN, None), *((lang, lang.value) for lang in Language)]
+    for lang, code in profiles:
+        try:
+            await _sync_profile(bot, lang, code)
+        except TelegramAPIError as exc:
+            # setMyName is heavily rate-limited; a stale name must not stop the bot.
+            log.warning("Could not update the bot profile for %s: %s", code or "default", exc)
     app_url = f"{public_url.rstrip('/')}/app/"
     if app_url.startswith("https://"):
         await bot.set_chat_menu_button(
