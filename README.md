@@ -4,6 +4,8 @@ Online booking for a small service business that lives inside Telegram. Clients 
 
 The demo is a made-up barbershop in Yerevan with four barbers, 13 services, 700 clients and two and a half months of history.
 
+**Live demo:** [booking.narcisbin.com](https://booking.narcisbin.com) · bot [@bookingnarcisbinbot](https://t.me/bookingnarcisbinbot) · [Mini App in the browser](https://booking.narcisbin.com/app/) · [admin](https://booking.narcisbin.com/admin/) (one-click demo login). Card payments are test ones; Stars deposits cost one Star and come back when you cancel in time.
+
 ![Mini App and admin](docs/screenshots/overview.png)
 
 | Catalogue | Time board | Deposit | Bonuses, dark theme |
