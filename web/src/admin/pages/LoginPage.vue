@@ -4,6 +4,8 @@ import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
+import { ApiError } from '@/shared/api/client'
+
 import { demoLogin, passwordLogin } from '../api'
 
 const { t } = useI18n()
@@ -22,8 +24,8 @@ async function go(kind: 'demo' | 'password'): Promise<void> {
     else await passwordLogin(email.value, password.value)
     const next = typeof route.query.next === 'string' ? route.query.next : '/journal'
     await router.replace(next)
-  } catch {
-    error.value = t('login.wrong')
+  } catch (e) {
+    error.value = e instanceof ApiError && e.status === 401 ? t('login.wrong') : t('common.error')
   } finally {
     busy.value = null
   }
